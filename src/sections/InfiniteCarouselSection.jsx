@@ -29,10 +29,10 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
     >
       <div className="section-card w-full max-w-6xl px-4">
         <h2 className="section-title section-title--carousel mb-2 text-center text-2xl font-semibold">
-          Infinite photo carousel
+          Праздничная лента воспоминаний
         </h2>
         <p className="mb-6 text-center text-sm text-zinc-300/80">
-          Мягкая лента воспоминаний, которая никогда не заканчивается.
+          Яркая гирлянда моментов — пусть сияет бесконечно.
         </p>
 
         <div
@@ -73,7 +73,7 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
         </div>
 
         <p className="mt-4 text-center text-xs text-zinc-200/60">
-          Tip: hover or focus pauses the animation.
+          Наведи курсор или тапни, чтобы остановить ленту.
         </p>
       </div>
     </Section>

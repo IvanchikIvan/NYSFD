@@ -5,16 +5,16 @@ import Section from "../components/Section";
 const ITEM_HEIGHT = 40; // px between items
 
 const PHRASES = [
-  "Design for humans, not screens",
-  "Performance is a UX feature",
-  "Less motion, more meaning",
-  "Content drives layout",
-  "State is a single source of truth",
-  "Animations follow intent",
-  "Defaults must feel smart",
-  "Latency kills engagement",
-  "Accessibility is not optional",
-  "Code is part of the product",
+  "Я люблю тебя за твою улыбку",
+  "Я люблю тебя за твой смех",
+  "Я люблю тебя за твоё доброе сердце",
+  "Я люблю тебя за твою заботу",
+  "Я люблю тебя за твою поддержку",
+  "Я люблю тебя за твоё вдохновение",
+  "Я люблю тебя за твою нежность",
+  "Я люблю тебя за твою искренность",
+  "Я люблю тебя за наше тепло",
+  "Я люблю тебя за то, что ты рядом",
 ];
 
 const VerticalWheelSection = memo(function VerticalWheelSection({
@@ -154,10 +154,10 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     >
       <div className="section-card w-full max-w-md px-4">
         <h2 className="section-title section-title--wheel mb-2 text-center text-2xl font-semibold">
-          Vertical phrase wheel
+          Я люблю тебя за…
         </h2>
         <p className="mb-6 text-center text-sm text-zinc-300/80">
-          Прокрути мысли и поймай фразу в центре.
+          Прокрути колесо и поймай тёплую причину в центре.
         </p>
 
         <div
@@ -198,7 +198,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
                     : "transform 0.18s ease-out, opacity 0.18s ease-out, filter 0.18s ease-out",
                 }}
               >
-                <span className="px-4 py-1 text-zinc-100">
+                <span className="wheel-phrase px-4 py-1 text-zinc-100">
                   {phrase}
                 </span>
               </div>
@@ -207,7 +207,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
         </div>
 
         <p className="mt-4 text-center text-xs text-zinc-200/60">
-          Drag with mouse or touch to spin. Middle phrase is strongest.
+          Потяни вверх/вниз, чтобы выбрать фразу. Центральная — самая яркая.
         </p>
       </div>
     </Section>

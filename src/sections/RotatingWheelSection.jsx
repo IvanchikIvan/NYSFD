@@ -28,6 +28,8 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
   const startYRef = useRef(0);
   const startPosRef = useRef(0);
   const draggingRef = useRef(false);
+  const rafRef = useRef(null);
+  const lastClientYRef = useRef(0);
 
   const maxIndex = PHRASES.length - 1;
 
@@ -46,7 +48,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [position]
   );
 
-  const updateDrag = useCallback(
+  const applyDrag = useCallback(
     (clientY) => {
       if (!draggingRef.current) return;
       const deltaPx = clientY - startYRef.current;
@@ -57,10 +59,28 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [clampPosition]
   );
 
+  const updateDrag = useCallback(
+    (clientY) => {
+      if (!draggingRef.current) return;
+      lastClientYRef.current = clientY;
+
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = null;
+        applyDrag(lastClientYRef.current);
+      });
+    },
+    [applyDrag]
+  );
+
   const endDrag = useCallback(() => {
     if (!draggingRef.current) return;
     draggingRef.current = false;
     setIsDragging(false);
+    if (rafRef.current) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
     // снап к ближайшей фразе
     setPosition((prev) => clampPosition(Math.round(prev)));
@@ -118,6 +138,13 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
       window.removeEventListener("touchend", onTouchEnd);
     };
   }, [isDragging, updateDrag, endDrag]);
+
+  useEffect(() => () => {
+    if (rafRef.current) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
 
   return (
     <Section

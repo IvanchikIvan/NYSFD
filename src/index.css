@@ -55,6 +55,24 @@ body {
   opacity: 0.9;
 }
 
+.section-shell--carousel::before {
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 209, 102, 0.3),
+    rgba(255, 46, 136, 0.2) 45%,
+    transparent 70%
+  );
+}
+
+.section-shell--wheel::before {
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(76, 201, 240, 0.28),
+    rgba(34, 255, 154, 0.18) 50%,
+    transparent 75%
+  );
+}
+
 .section-card {
   position: relative;
   z-index: 1;
@@ -81,6 +99,18 @@ body {
   letter-spacing: 0.02em;
 }
 
+.section-title--carousel {
+  background: linear-gradient(92deg, #ffd166, #ff2e88 55%, #ff7ad9);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.section-title--wheel {
+  background: linear-gradient(92deg, #4cc9f0, #22ff9a 55%, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 .wheel-shell {
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -91,6 +121,17 @@ body {
     inset 0 0 30px rgba(0, 0, 0, 0.55),
     0 20px 60px rgba(0, 0, 0, 0.55);
   contain: layout paint;
+}
+
+.wheel-shell--wheel {
+  background:
+    linear-gradient(180deg, rgba(5, 18, 24, 0.85), rgba(7, 25, 20, 0.9)),
+    radial-gradient(120% 120% at 50% 0%, rgba(76, 201, 240, 0.25), transparent 60%),
+    radial-gradient(140% 140% at 50% 120%, rgba(34, 255, 154, 0.2), transparent 55%);
+  box-shadow:
+    inset 0 0 35px rgba(0, 0, 0, 0.55),
+    0 20px 70px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(76, 201, 240, 0.18);
 }
 
 /* Subtle animated sparkle layer */
@@ -159,6 +200,18 @@ body::before {
     0 18px 60px rgba(0,0,0,0.55),
     0 0 40px rgba(255, 209, 102, 0.12);
   contain: layout paint;
+}
+
+.marquee--carousel {
+  background: linear-gradient(
+    130deg,
+    rgba(255, 209, 102, 0.22),
+    rgba(255, 46, 136, 0.18),
+    rgba(76, 201, 240, 0.16)
+  );
+  box-shadow:
+    0 22px 70px rgba(0,0,0,0.55),
+    0 0 50px rgba(255, 209, 102, 0.22);
 }
 
 .marquee__track {

@@ -25,10 +25,10 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
     <Section
       id={id}
       ref={sectionRef}
-      className="section-shell flex items-center justify-center"
+      className="section-shell section-shell--carousel flex items-center justify-center"
     >
       <div className="section-card w-full max-w-6xl px-4">
-        <h2 className="section-title mb-2 text-center text-2xl font-semibold">
+        <h2 className="section-title section-title--carousel mb-2 text-center text-2xl font-semibold">
           Infinite photo carousel
         </h2>
         <p className="mb-6 text-center text-sm text-zinc-300/80">
@@ -36,7 +36,7 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
         </p>
 
         <div
-          className="marquee"
+          className="marquee marquee--carousel"
           style={{
             "--duration": `${speedSeconds}s`,
             "--gap": `${gap}px`,

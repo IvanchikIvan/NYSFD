@@ -150,10 +150,10 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     <Section
       id={id}
       ref={sectionRef}
-      className="section-shell flex items-center justify-center"
+      className="section-shell section-shell--wheel flex items-center justify-center"
     >
       <div className="section-card w-full max-w-md px-4">
-        <h2 className="section-title mb-2 text-center text-2xl font-semibold">
+        <h2 className="section-title section-title--wheel mb-2 text-center text-2xl font-semibold">
           Vertical phrase wheel
         </h2>
         <p className="mb-6 text-center text-sm text-zinc-300/80">
@@ -162,7 +162,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
 
         <div
           className={[
-            "wheel-shell relative mx-auto h-72 w-full max-w-sm overflow-hidden",
+            "wheel-shell wheel-shell--wheel relative mx-auto h-72 w-full max-w-sm overflow-hidden",
             "select-none",
             isDragging ? "cursor-grabbing" : "cursor-grab",
           ].join(" ")}

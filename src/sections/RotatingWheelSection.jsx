@@ -123,18 +123,19 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     <Section
       id={id}
       ref={sectionRef}
-      className="flex items-center justify-center bg-zinc-950"
+      className="section-shell flex items-center justify-center"
     >
-      <div className="w-full max-w-md px-4">
-        <h2 className="mb-6 text-center text-xl font-semibold text-zinc-200">
+      <div className="section-card w-full max-w-md px-4">
+        <h2 className="section-title mb-2 text-center text-2xl font-semibold">
           Vertical phrase wheel
         </h2>
+        <p className="mb-6 text-center text-sm text-zinc-300/80">
+          Прокрути мысли и поймай фразу в центре.
+        </p>
 
         <div
           className={[
-            "relative mx-auto h-72 w-full max-w-sm overflow-hidden",
-            "rounded-3xl border border-zinc-800 bg-zinc-900/80",
-            "shadow-[0_0_40px_rgba(0,0,0,0.6)]",
+            "wheel-shell relative mx-auto h-72 w-full max-w-sm overflow-hidden",
             "select-none",
             isDragging ? "cursor-grabbing" : "cursor-grab",
           ].join(" ")}
@@ -178,7 +179,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
           })}
         </div>
 
-        <p className="mt-4 text-center text-xs text-zinc-500">
+        <p className="mt-4 text-center text-xs text-zinc-200/60">
           Drag with mouse or touch to spin. Middle phrase is strongest.
         </p>
       </div>

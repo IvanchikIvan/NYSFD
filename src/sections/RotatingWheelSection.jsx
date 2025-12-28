@@ -28,6 +28,8 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
   const startYRef = useRef(0);
   const startPosRef = useRef(0);
   const draggingRef = useRef(false);
+  const rafRef = useRef(null);
+  const lastClientYRef = useRef(0);
 
   const maxIndex = PHRASES.length - 1;
 
@@ -46,7 +48,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [position]
   );
 
-  const updateDrag = useCallback(
+  const applyDrag = useCallback(
     (clientY) => {
       if (!draggingRef.current) return;
       const deltaPx = clientY - startYRef.current;
@@ -57,10 +59,28 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [clampPosition]
   );
 
+  const updateDrag = useCallback(
+    (clientY) => {
+      if (!draggingRef.current) return;
+      lastClientYRef.current = clientY;
+
+      if (rafRef.current) return;
+      rafRef.current = window.requestAnimationFrame(() => {
+        rafRef.current = null;
+        applyDrag(lastClientYRef.current);
+      });
+    },
+    [applyDrag]
+  );
+
   const endDrag = useCallback(() => {
     if (!draggingRef.current) return;
     draggingRef.current = false;
     setIsDragging(false);
+    if (rafRef.current) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
 
     // снап к ближайшей фразе
     setPosition((prev) => clampPosition(Math.round(prev)));
@@ -119,22 +139,30 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     };
   }, [isDragging, updateDrag, endDrag]);
 
+  useEffect(() => () => {
+    if (rafRef.current) {
+      window.cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
   return (
     <Section
       id={id}
       ref={sectionRef}
-      className="flex items-center justify-center bg-zinc-950"
+      className="section-shell section-shell--wheel flex items-center justify-center"
     >
-      <div className="w-full max-w-md px-4">
-        <h2 className="mb-6 text-center text-xl font-semibold text-zinc-200">
+      <div className="section-card w-full max-w-md px-4">
+        <h2 className="section-title section-title--wheel mb-2 text-center text-2xl font-semibold">
           Vertical phrase wheel
         </h2>
+        <p className="mb-6 text-center text-sm text-zinc-300/80">
+          Прокрути мысли и поймай фразу в центре.
+        </p>
 
         <div
           className={[
-            "relative mx-auto h-72 w-full max-w-sm overflow-hidden",
-            "rounded-3xl border border-zinc-800 bg-zinc-900/80",
-            "shadow-[0_0_40px_rgba(0,0,0,0.6)]",
+            "wheel-shell wheel-shell--wheel relative mx-auto h-72 w-full max-w-sm overflow-hidden",
             "select-none",
             isDragging ? "cursor-grabbing" : "cursor-grab",
           ].join(" ")}
@@ -178,7 +206,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
           })}
         </div>
 
-        <p className="mt-4 text-center text-xs text-zinc-500">
+        <p className="mt-4 text-center text-xs text-zinc-200/60">
           Drag with mouse or touch to spin. Middle phrase is strongest.
         </p>
       </div>

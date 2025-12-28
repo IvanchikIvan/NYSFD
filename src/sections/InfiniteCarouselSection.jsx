@@ -25,15 +25,18 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
     <Section
       id={id}
       ref={sectionRef}
-      className="flex items-center justify-center bg-zinc-950"
+      className="section-shell section-shell--carousel flex items-center justify-center"
     >
-      <div className="w-full max-w-6xl px-4">
-        <h2 className="mb-6 text-center text-xl font-semibold text-zinc-200">
+      <div className="section-card w-full max-w-6xl px-4">
+        <h2 className="section-title section-title--carousel mb-2 text-center text-2xl font-semibold">
           Infinite photo carousel
         </h2>
+        <p className="mb-6 text-center text-sm text-zinc-300/80">
+          Мягкая лента воспоминаний, которая никогда не заканчивается.
+        </p>
 
         <div
-          className="marquee"
+          className="marquee marquee--carousel"
           style={{
             "--duration": `${speedSeconds}s`,
             "--gap": `${gap}px`,
@@ -69,7 +72,7 @@ const PhotoCarouselSection = memo(function PhotoCarouselSection({
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_55%,rgba(0,0,0,0.55)_100%)]" />
         </div>
 
-        <p className="mt-4 text-center text-xs text-zinc-500">
+        <p className="mt-4 text-center text-xs text-zinc-200/60">
           Tip: hover or focus pauses the animation.
         </p>
       </div>

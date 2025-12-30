@@ -275,6 +275,290 @@ body::after {
     0 0 18px rgba(76, 201, 240, 0.25);
 }
 
+/* Love tree section */
+.love-tree-section {
+  --tree-panel-bg: rgba(0, 0, 0, 0.75);
+}
+
+.love-tree-app {
+  position: relative;
+  width: min(1100px, 94vw);
+  min-height: min(760px, 85vh);
+  padding: clamp(20px, 4vw, 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle at top, #022 0, #000 55%, #000 100%);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.6),
+    0 0 50px rgba(34, 255, 154, 0.12);
+}
+
+.love-tree-app * {
+  box-sizing: border-box;
+}
+
+.play-button {
+  position: absolute;
+  left: clamp(16px, 5vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(52px, 6vw, 64px);
+  height: clamp(52px, 6vw, 64px);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.play-button:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.play-button.playing {
+  border-color: rgba(80, 250, 123, 0.9);
+  box-shadow: 0 0 22px rgba(80, 250, 123, 0.8);
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-left: 18px solid #ffffff;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  margin-left: 3px;
+}
+
+.play-button.playing .play-icon {
+  border-left-color: #50fa7b;
+}
+
+.controls-panel {
+  position: absolute;
+  top: clamp(18px, 4vw, 28px);
+  right: clamp(18px, 4vw, 32px);
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: min(300px, 70vw);
+  font-size: 13px;
+  color: #f8f8f2;
+}
+
+.control-group {
+  display: grid;
+  gap: 8px;
+}
+
+.control-label {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.control-label input[type="number"] {
+  width: 90px;
+  margin-left: 8px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+}
+
+.control-group input[type="range"] {
+  width: 100%;
+}
+
+.time-info {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.tree-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tree-container {
+  font-family: "Fira Code", "JetBrains Mono", "Courier New", monospace;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tree-line {
+  white-space: nowrap;
+}
+
+.tree-star {
+  display: inline-block;
+  font-size: 20px;
+  animation-name: blinkTree;
+  animation-duration: 1.6s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
+}
+
+.tree-star-top {
+  font-size: 22px;
+  text-shadow: 0 0 10px #ffd700;
+}
+
+.tree-trunk {
+  margin-top: 8px;
+}
+
+.trunk-line {
+  white-space: nowrap;
+}
+
+.trunk-char {
+  display: inline-block;
+  margin: 0 3px;
+  font-size: 20px;
+  color: #eee;
+}
+
+@keyframes blinkTree {
+  0% {
+    opacity: 0.3;
+    color: #ff5555;
+    text-shadow: 0 0 4px #ff5555;
+  }
+  25% {
+    opacity: 1;
+    color: #55ffff;
+    text-shadow: 0 0 6px #55ffff;
+  }
+  50% {
+    opacity: 0.6;
+    color: #ffd700;
+    text-shadow: 0 0 6px #ffd700;
+  }
+  75% {
+    opacity: 1;
+    color: #ff79c6;
+    text-shadow: 0 0 8px #ff79c6;
+  }
+  100% {
+    opacity: 0.4;
+    color: #50fa7b;
+    text-shadow: 0 0 4px #50fa7b;
+  }
+}
+
+.lyrics-panel {
+  position: absolute;
+  bottom: clamp(20px, 6vw, 40px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 80vw);
+  max-width: 60ch;
+  background: var(--tree-panel-bg);
+  padding: 16px 24px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.4;
+  color: #f8f8f2;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.lyrics-panel p + p {
+  margin-top: 4px;
+}
+
+.debug-reset-button {
+  width: 64px;
+  padding: 8px 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8f8f2;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.debug-reset-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 900px) {
+  .love-tree-app {
+    width: min(760px, 94vw);
+    min-height: min(680px, 80vh);
+  }
+
+  .controls-panel {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin-bottom: 16px;
+  }
+
+  .love-tree-app {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .play-button {
+    position: static;
+    transform: none;
+    margin-bottom: 16px;
+  }
+
+  .play-button:hover {
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 640px) {
+  .tree-star,
+  .trunk-char,
+  .tree-star-top {
+    font-size: 14px;
+  }
+
+  .lyrics-panel {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
 .marquee:hover .marquee__track,
 .marquee:focus-within .marquee__track {
   animation-play-state: paused;
@@ -300,5 +584,9 @@ body::after {
   .marquee__track {
     animation: none;
     transform: translateX(0);
+  }
+
+  .tree-star {
+    animation: none;
   }
 }

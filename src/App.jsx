@@ -6,6 +6,7 @@ const HelloSection = lazy(() => import("./sections/HelloSection.jsx"));
 const InfiniteCarouselSection = lazy(() => import("./sections/InfiniteCarouselSection.jsx"));
 const RotatingWheelSection = lazy(() => import("./sections/RotatingWheelSection.jsx"));
 const LoveTreeSection = lazy(() => import("./sections/LoveTreeSection.jsx"));
+const QRCodeSection = lazy(() => import("./sections/QRCodeSection.jsx"));
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <InfiniteCarouselSection id="carousel" />
         <RotatingWheelSection id="wheel" />
         <LoveTreeSection id="tree" />
+        <QRCodeSection id="qr" />
       </SectionWrapper>
     </Suspense>
   );

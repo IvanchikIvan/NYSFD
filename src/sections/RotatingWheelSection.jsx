@@ -2,27 +2,40 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import Section from "../components/Section";
 
-const ITEM_HEIGHT = 40; // px between items
+const ITEM_HEIGHT = 50;
 
 const PHRASES = [
-  "Design for humans, not screens",
-  "Performance is a UX feature",
-  "Less motion, more meaning",
-  "Content drives layout",
-  "State is a single source of truth",
-  "Animations follow intent",
-  "Defaults must feel smart",
-  "Latency kills engagement",
-  "Accessibility is not optional",
-  "Code is part of the product",
+  "За то, что ты моя опора и поддержка",
+  "За твои волшебные черешневые волосы",
+  "За то, как мы булчимся",
+  "За твою нежную заботу обо мне",
+  "За то, как страстно мы любимся",
+  "За то, что ты хочешь меня накормить",
+  "За наши бесконечные тёплые созвоны",
+  "За то, что мы вместе играем и веселимся",
+  "За твою невероятно чувствительную шею",
+  "За твою искренность со мной",
+  "За наше особенное тепло друг к другу",
+  "За то, что ты всегда рядом, когда нужно",
+  "За то, что я твоя любимая бусинка",
+  "За наши совместные милые фоточки",
+  "За твоё обворожительное милое лицо",
+  "За твою улыбку, от которой тает сердце",
+  "За твои нежные прикосновения",
+  "За то, как ты смотришь на меня",
+  "За твой заразительный смех",
+  "За твои объятия, в которых я таю",
+  "За то, что понимаешь меня с полуслова",
+  "За наши общие мечты о будущем",
+  "За твою способность меня успокоить",
+  "За то, как ты заботишься о моём настроении",
 ];
 
 const VerticalWheelSection = memo(function VerticalWheelSection({
   id,
   sectionRef,
 }) {
-  // position in "index units": 0 = первая фраза по центру, 1 = вторая и т.д.
-  const [position, setPosition] = useState(2); // стартуем где‑то в середине
+  const [position, setPosition] = useState(Math.floor(PHRASES.length / 2));
   const [isDragging, setIsDragging] = useState(false);
 
   const startYRef = useRef(0);
@@ -52,7 +65,7 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     (clientY) => {
       if (!draggingRef.current) return;
       const deltaPx = clientY - startYRef.current;
-      const deltaIndex = -deltaPx / ITEM_HEIGHT; // drag вверх -> индекс растёт
+      const deltaIndex = -deltaPx / ITEM_HEIGHT;
       const nextPos = clampPosition(startPosRef.current + deltaIndex);
       setPosition(nextPos);
     },
@@ -82,11 +95,9 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
       rafRef.current = null;
     }
 
-    // снап к ближайшей фразе
     setPosition((prev) => clampPosition(Math.round(prev)));
   }, [clampPosition]);
 
-  // Mouse handlers
   const handleMouseDown = useCallback(
     (e) => {
       e.preventDefault();
@@ -95,7 +106,6 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [beginDrag]
   );
 
-  // Touch handlers
   const handleTouchStart = useCallback(
     (e) => {
       if (!e.touches || e.touches.length === 0) return;
@@ -105,7 +115,6 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     [beginDrag]
   );
 
-  // Глобальные move / end, чтобы не терять drag при выходе за границы
   useEffect(() => {
     if (!isDragging) return;
 
@@ -139,66 +148,175 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
     };
   }, [isDragging, updateDrag, endDrag]);
 
-  useEffect(() => () => {
-    if (rafRef.current) {
-      window.cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-  }, []);
+  useEffect(
+    () => () => {
+      if (rafRef.current) {
+        window.cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    },
+    []
+  );
+
+  const currentIndex = Math.round(position);
 
   return (
     <Section
       id={id}
       ref={sectionRef}
-      className="section-shell section-shell--wheel flex items-center justify-center"
+      className="section-shell section-shell--wheel flex items-center justify-center relative overflow-hidden min-h-screen py-8 sm:py-12"
+      style={{
+        background:
+          "radial-gradient(ellipse at center, #1a0a0a 0%, #0a0505 100%)",
+      }}
     >
-      <div className="section-card w-full max-w-md px-4">
-        <h2 className="section-title section-title--wheel mb-2 text-center text-2xl font-semibold">
-          Vertical phrase wheel
-        </h2>
-        <p className="mb-6 text-center text-sm text-zinc-300/80">
-          Прокрути мысли и поймай фразу в центре.
-        </p>
+      {/* Декоративные элементы фона */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-1/4 right-1/4 w-48 h-48 sm:w-64 sm:h-64 rounded-full blur-3xl opacity-10"
+          style={{
+            background: "radial-gradient(circle, #ff1744 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute bottom-1/3 left-1/4 w-56 h-56 sm:w-72 sm:h-72 rounded-full blur-3xl opacity-10"
+          style={{
+            background: "radial-gradient(circle, #ff4081 0%, transparent 70%)",
+          }}
+        />
+      </div>
 
+      <div className="section-card w-full max-w-3xl px-4 sm:px-6 relative z-10">
+        {/* Заголовок */}
+        <div className="mb-6 sm:mb-8 text-center">
+          <h2
+            className="section-title section-title--wheel mb-2 sm:mb-3"
+            style={{
+              fontFamily: "'Playfair Display', 'Georgia', serif",
+              background: "linear-gradient(135deg, #ff6b9d 0%, #ffc3a0 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              letterSpacing: "0.02em",
+              textShadow: "0 0 30px rgba(255, 107, 157, 0.3)",
+              fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
+              fontWeight: "700",
+            }}
+          >
+            Я люблю тебя за…
+          </h2>
+          <p
+            className="text-zinc-400"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              fontSize: "clamp(0.7rem, 2vw, 0.875rem)",
+            }}
+          >
+            Тяни список вверх или вниз
+          </p>
+        </div>
+
+        {/* Колесо с фразами */}
         <div
           className={[
-            "wheel-shell wheel-shell--wheel relative mx-auto h-72 w-full max-w-sm overflow-hidden",
+            "wheel-shell wheel-shell--wheel relative mx-auto overflow-hidden rounded-xl sm:rounded-2xl",
             "select-none",
             isDragging ? "cursor-grabbing" : "cursor-grab",
           ].join(" ")}
+          style={{
+            height: "clamp(300px, 50vh, 400px)",
+            width: "100%",
+            maxWidth: "100%",
+            background:
+              "linear-gradient(180deg, rgba(26, 10, 10, 0.4) 0%, rgba(26, 10, 10, 0.8) 50%, rgba(26, 10, 10, 0.4) 100%)",
+            border: "1px solid rgba(255, 107, 157, 0.1)",
+            boxShadow: "inset 0 0 60px rgba(0, 0, 0, 0.5)",
+          }}
           onMouseDown={handleMouseDown}
           onTouchStart={handleTouchStart}
         >
-          {/* Центральная направляющая (опционально) */}
-          <div className="pointer-events-none absolute left-4 right-4 top-1/2 h-[1px] -translate-y-1/2 bg-gradient-to-r from-transparent via-zinc-500/60 to-transparent" />
+          {/* Центральная выделенная зона */}
+          <div
+            className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2"
+            style={{
+              height: "clamp(60px, 15vh, 80px)",
+              background:
+                "linear-gradient(180deg, transparent 0%, rgba(255, 107, 157, 0.08) 50%, transparent 100%)",
+              borderTop: "1px solid rgba(255, 107, 157, 0.2)",
+              borderBottom: "1px solid rgba(255, 107, 157, 0.2)",
+            }}
+          />
 
-          {/* Список фраз, каждая позиционируется вокруг центра */}
+          {/* Верхняя и нижняя затемняющие маски */}
+          <div
+            className="pointer-events-none absolute top-0 left-0 right-0"
+            style={{
+              height: "clamp(80px, 20vh, 120px)",
+              background:
+                "linear-gradient(180deg, rgba(26, 10, 10, 1) 0%, transparent 100%)",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute bottom-0 left-0 right-0"
+            style={{
+              height: "clamp(80px, 20vh, 120px)",
+              background:
+                "linear-gradient(0deg, rgba(26, 10, 10, 1) 0%, transparent 100%)",
+            }}
+          />
+
+          {/* Список фраз */}
           {PHRASES.map((phrase, index) => {
             const distance = Math.abs(index - position);
 
-            const scale = 1.25 - Math.min(distance * 0.15, 0.6);
-            const opacity = 1 - Math.min(distance * 0.25, 0.85);
-            const blur = Math.min(distance * 1.5, 6);
+            const scale = 1.15 - Math.min(distance * 0.15, 0.55);
+            const opacity = 1 - Math.min(distance * 0.3, 0.9);
+            const blur = Math.min(distance * 2, 8);
             const offset = (index - position) * ITEM_HEIGHT;
 
             const transform = `translate(-50%, calc(-50% + ${offset}px)) scale(${scale})`;
             const zIndex = 100 - Math.round(distance * 10);
 
+            const isCurrent = Math.abs(distance) < 0.5;
+
             return (
               <div
                 key={index}
-                className="pointer-events-none absolute left-1/2 top-1/2 whitespace-nowrap text-center text-base sm:text-lg"
+                className="pointer-events-none absolute left-1/2 top-1/2 text-center px-2 sm:px-4"
                 style={{
                   transform,
                   opacity,
                   filter: `blur(${blur}px)`,
                   zIndex,
+                  width: "95%",
+                  maxWidth: "100%",
                   transition: draggingRef.current
                     ? "none"
-                    : "transform 0.18s ease-out, opacity 0.18s ease-out, filter 0.18s ease-out",
+                    : "transform 0.2s ease-out, opacity 0.2s ease-out, filter 0.2s ease-out",
                 }}
               >
-                <span className="px-4 py-1 text-zinc-100">
+                <span
+                  className="wheel-phrase inline-block px-3 sm:px-6 py-1 sm:py-2"
+                  style={{
+                    fontFamily: "'Crimson Text', 'Georgia', serif",
+                    fontSize: isCurrent
+                      ? "clamp(1.1rem, 4vw, 1.5rem)"
+                      : "clamp(0.9rem, 3.5vw, 1.25rem)",
+                    fontWeight: isCurrent ? "600" : "400",
+                    color: isCurrent ? "#ffc3a0" : "#e0e0e0",
+                    textShadow: isCurrent
+                      ? "0 0 20px rgba(255, 107, 157, 0.6), 0 2px 4px rgba(0, 0, 0, 0.8)"
+                      : "0 2px 4px rgba(0, 0, 0, 0.6)",
+                    letterSpacing: "0.02em",
+                    lineHeight: "1.4",
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    hyphens: "auto",
+                    display: "block",
+                  }}
+                >
                   {phrase}
                 </span>
               </div>
@@ -206,9 +324,31 @@ const VerticalWheelSection = memo(function VerticalWheelSection({
           })}
         </div>
 
-        <p className="mt-4 text-center text-xs text-zinc-200/60">
-          Drag with mouse or touch to spin. Middle phrase is strongest.
-        </p>
+        {/* Счётчик фраз */}
+        <div className="mt-4 sm:mt-6 text-center">
+          <p
+            className="text-zinc-500"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+            }}
+          >
+            {currentIndex + 1} из {PHRASES.length}
+          </p>
+        </div>
+
+        {/* Декоративная подсказка */}
+        <div className="mt-6 sm:mt-8 text-center px-4">
+          <p
+            className="text-zinc-400/60 italic"
+            style={{
+              fontFamily: "'Crimson Text', 'Georgia', serif",
+              fontSize: "clamp(0.7rem, 2vw, 0.875rem)",
+            }}
+          >
+            И это ещё не все причины...
+          </p>
+        </div>
       </div>
     </Section>
   );

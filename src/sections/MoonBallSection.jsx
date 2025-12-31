@@ -1,109 +1,60 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import Section from "../components/Section";
+import React, { useRef, useState } from "react";
 
-const LEVELS = 14;
-const TRUNK_HEIGHT = 4;
-const TRUNK_WIDTH = 3;
-const BUFFER_LINES = 6;
-
-const TIMED_WORDS = [
-  // Add your timed words here with format: { t: 0.0, text: "word" }
-  // Use { t: time, text: "\n" } for line breaks
-];
-
-const MoonBallSection = memo(function MoonBallSection({ id, sectionRef }) {
+const TimingEditor = () => {
   const audioRef = useRef(null);
-
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
-  const [visibleLines, setVisibleLines] = useState([]);
-  const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [words, setWords] = useState([]);
+  const [audioSrc, setAudioSrc] = useState("/sweet.mp3");
 
-  const treeLines = useMemo(() => {
-    const lines = [];
-
-    for (let level = 0; level < LEVELS; level += 1) {
-      const starsCount = 1 + level * 2;
-      const line = [];
-
-      for (let i = 0; i < starsCount; i += 1) {
-        line.push({
-          id: `${level}-${i}`,
-          delay: `${(Math.random() * 2).toFixed(2)}s`,
-        });
+  const handleLoadText = () => {
+    const lines = inputText.split("\n");
+    const wordList = [];
+    
+    lines.forEach((line) => {
+      const lineWords = line.trim().split(/\s+/).filter(Boolean);
+      lineWords.forEach((word) => {
+        wordList.push({ text: word, t: null });
+      });
+      if (line.trim()) {
+        wordList.push({ text: "\\n", t: null });
       }
+    });
 
-      lines.push(line);
-    }
+    setWords(wordList);
+  };
 
-    return lines;
-  }, []);
-
-  const handleReset = () => {
+  const handleWordClick = (index) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.pause();
-    audio.currentTime = 0;
-
-    setIsPlaying(false);
-    setCurrentWordIndex(-1);
-    setVisibleLines([]);
-    setCurrentTime(0);
+    const newWords = [...words];
+    newWords[index].t = parseFloat(audio.currentTime.toFixed(2));
+    setWords(newWords);
   };
 
-  const findWordIndexForTime = (time) => {
-    let idx = -1;
-    for (let i = 0; i < TIMED_WORDS.length; i += 1) {
-      if (TIMED_WORDS[i].t <= time) {
-        idx = i;
-      } else {
-        break;
-      }
-    }
-    return idx;
+  const handleExport = () => {
+    const output = words
+      .filter((w) => w.t !== null)
+      .map((w) => `  { t: ${w.t}, text: "${w.text}" }`)
+      .join(",\n");
+
+    const fullOutput = `const TIMED_WORDS = [\n${output}\n];`;
+    
+    navigator.clipboard.writeText(fullOutput);
+    alert("JSON скопирован в буфер обмена!");
   };
 
-  useEffect(() => {
-    if (currentWordIndex < 0) {
-      setVisibleLines([]);
-      return;
-    }
-
-    let lines = [""];
-    for (let i = 0; i <= currentWordIndex && i < TIMED_WORDS.length; i += 1) {
-      const word = TIMED_WORDS[i];
-
-      if (word.text === "\n") {
-        lines.push("");
-      } else {
-        const lastIndex = lines.length - 1;
-        const existing = lines[lastIndex];
-        lines[lastIndex] = existing ? `${existing} ${word.text}` : word.text;
-      }
-    }
-
-    if (lines.length > 0 && lines[lines.length - 1] === "") {
-      lines = lines.slice(0, -1);
-    }
-
-    const start = Math.max(0, lines.length - BUFFER_LINES);
-    setVisibleLines(lines.slice(start));
-  }, [currentWordIndex]);
+  const handleClearAll = () => {
+    setWords(words.map(w => ({ ...w, t: null })));
+  };
 
   const handleTimeUpdate = () => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const time = audio.currentTime;
-    setCurrentTime(time);
-
-    const idx = findWordIndexForTime(time);
-    if (idx !== currentWordIndex) {
-      setCurrentWordIndex(idx);
-    }
+    setCurrentTime(audio.currentTime);
   };
 
   const handleLoadedMetadata = () => {
@@ -111,29 +62,6 @@ const MoonBallSection = memo(function MoonBallSection({ id, sectionRef }) {
     if (!audio) return;
     setDuration(audio.duration || 0);
   };
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onEnded = () => {
-      setIsPlaying(false);
-      setCurrentWordIndex(TIMED_WORDS.length - 1);
-      setCurrentTime(audio.duration || 0);
-    };
-
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("pause", onPause);
-    audio.addEventListener("ended", onEnded);
-
-    return () => {
-      audio.removeEventListener("play", onPlay);
-      audio.removeEventListener("pause", onPause);
-      audio.removeEventListener("ended", onEnded);
-    };
-  }, []);
 
   const handleTogglePlay = () => {
     const audio = audioRef.current;
@@ -146,154 +74,123 @@ const MoonBallSection = memo(function MoonBallSection({ id, sectionRef }) {
     }
   };
 
-  const handleVolumeChange = (e) => {
+  const handleSeek = (e) => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const value = Number(e.target.value);
-    setVolume(value);
-    audio.volume = value;
-  };
-
-  const handleSeek = (newTime) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.currentTime = newTime;
-    setCurrentTime(newTime);
-
-    const idx = findWordIndexForTime(newTime);
-    setCurrentWordIndex(idx);
-  };
-
-  const handleTimeSliderChange = (e) => {
-    const value = Number(e.target.value);
-    handleSeek(value);
-  };
-
-  const handleTimeInputChange = (e) => {
-    let value = Number(e.target.value);
-    if (Number.isNaN(value)) return;
-
-    if (value < 0) value = 0;
-    if (duration && value > duration) value = duration;
-
-    handleSeek(value);
+    audio.currentTime = Number(e.target.value);
   };
 
   return (
-    <Section
-      id={id}
-      ref={sectionRef}
-      className="section-shell moon-ball-section flex items-center justify-center"
-    >
-      <div className="moon-ball-app">
-        <button
-          className={`play-button ${isPlaying ? "playing" : ""}`}
-          onClick={handleTogglePlay}
-          type="button"
-        >
-          <span className="play-icon" />
+    <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+      <h1>Timing Editor</h1>
+
+      {/* Audio Controls */}
+      <div style={{ marginBottom: "20px", padding: "15px", background: "#f5f5f5", borderRadius: "8px" }}>
+        <div style={{ marginBottom: "10px" }}>
+          <label>
+            Audio file path:
+            <input
+              type="text"
+              value={audioSrc}
+              onChange={(e) => setAudioSrc(e.target.value)}
+              style={{ marginLeft: "10px", padding: "5px", width: "300px" }}
+            />
+          </label>
+        </div>
+
+        <button onClick={handleTogglePlay} style={{ padding: "10px 20px", marginRight: "10px" }}>
+          {isPlaying ? "⏸ Pause" : "▶ Play"}
         </button>
 
-        <div className="controls-panel">
-          <div className="control-group">
-            <label className="control-label">
-              Volume: {Math.round(volume * 100)}%
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
-            </label>
+        <div style={{ marginTop: "10px" }}>
+          <input
+            type="range"
+            min="0"
+            max={duration || 0}
+            step="0.1"
+            value={currentTime}
+            onChange={handleSeek}
+            style={{ width: "100%" }}
+          />
+          <div>
+            {currentTime.toFixed(2)}s / {duration.toFixed(2)}s
           </div>
-
-          <div className="control-group">
-            <label className="control-label">
-              Debug time (sec):
-              <input
-                type="number"
-                value={currentTime.toFixed(1)}
-                onChange={handleTimeInputChange}
-              />
-            </label>
-            <div className="control-slider">
-              <input
-                type="range"
-                min="0"
-                max={duration || 0}
-                step="0.1"
-                value={currentTime}
-                onChange={handleTimeSliderChange}
-              />
-            </div>
-            <div className="time-info">
-              {currentTime.toFixed(1)}s / {duration ? duration.toFixed(1) : "0.0"}
-              s
-            </div>
-          </div>
-        </div>
-
-        <div className="tree-wrapper">
-          <div className="tree-container">
-            <div className="tree-line">
-              <span className="tree-star tree-star-top">*</span>
-            </div>
-
-            <button
-              className="debug-reset-button"
-              onClick={handleReset}
-              type="button"
-            >
-              Reset
-            </button>
-
-            {treeLines.map((line, rowIdx) => (
-              <div className="tree-line" key={rowIdx}>
-                {line.map((star) => (
-                  <span
-                    key={star.id}
-                    className="tree-star"
-                    style={{ animationDelay: star.delay }}
-                  >
-                    *
-                  </span>
-                ))}
-              </div>
-            ))}
-
-            <div className="tree-trunk">
-              {Array.from({ length: TRUNK_HEIGHT }).map((_, row) => (
-                <div className="trunk-line" key={row}>
-                  {Array.from({ length: TRUNK_WIDTH }).map((__, col) => (
-                    <span key={`${row}-${col}`} className="trunk-char">
-                      |
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="lyrics-panel">
-          {visibleLines.map((line, idx) => (
-            <p key={idx}>{line}</p>
-          ))}
         </div>
 
         <audio
           ref={audioRef}
-          src="/white_ball.mp3"
+          src={audioSrc}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
         />
       </div>
-    </Section>
-  );
-});
 
-export default MoonBallSection;
+      {/* Text Input */}
+      <div style={{ marginBottom: "20px" }}>
+        <h3>1. Вставь текст песни:</h3>
+        <textarea
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Вставь текст песни построчно..."
+          rows={10}
+          style={{ width: "100%", padding: "10px", fontFamily: "monospace" }}
+        />
+        <button onClick={handleLoadText} style={{ padding: "10px 20px", marginTop: "10px" }}>
+          Загрузить слова
+        </button>
+      </div>
+
+      {/* Words Grid */}
+      {words.length > 0 && (
+        <div style={{ marginBottom: "20px" }}>
+          <h3>2. Кликай на слова во время проигрывания:</h3>
+          <p style={{ color: "#666", marginBottom: "10px" }}>
+            🎵 Запусти аудио и кликай на слово в момент, когда оно звучит
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "10px" }}>
+            {words.map((word, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleWordClick(idx)}
+                style={{
+                  padding: "8px 12px",
+                  background: word.t !== null ? "#4caf50" : "#e0e0e0",
+                  color: word.t !== null ? "white" : "black",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontFamily: "monospace",
+                  fontSize: word.text === "\\n" ? "10px" : "14px",
+                }}
+                title={word.t !== null ? `t: ${word.t}s` : "Не задан"}
+              >
+                {word.text === "\\n" ? "↵" : word.text}
+                {word.t !== null && <span style={{ fontSize: "10px", marginLeft: "4px" }}>({word.t})</span>}
+              </button>
+            ))}
+          </div>
+          <button onClick={handleClearAll} style={{ padding: "8px 16px", background: "#ff5722", color: "white", border: "none", borderRadius: "4px" }}>
+            Очистить все тайминги
+          </button>
+        </div>
+      )}
+
+      {/* Export */}
+      {words.some((w) => w.t !== null) && (
+        <div>
+          <h3>3. Экспорт:</h3>
+          <button onClick={handleExport} style={{ padding: "10px 20px", background: "#2196f3", color: "white", border: "none", borderRadius: "4px" }}>
+            📋 Скопировать JSON в буфер обмена
+          </button>
+          <div style={{ marginTop: "10px", color: "#666" }}>
+            {words.filter(w => w.t !== null).length} / {words.length} слов с таймингами
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default TimingEditor;

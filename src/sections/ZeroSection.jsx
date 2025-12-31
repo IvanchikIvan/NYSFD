@@ -91,12 +91,8 @@ const ZeroSection = memo(function ZeroSection({ id, sectionRef }) {
             </div>
           </div>
 
-          <p className="text-zinc-200/70 text-[clamp(1.05rem,2.6vw,1.5rem)]">
+          <p className="text-zinc-200/70 text-[clamp(1.05rem,2.6vw,1.5rem)] z-40 mt-15">
             пока Вани нет
-          </p>
-
-          <p className="mt-6 text-zinc-400/70 text-[clamp(0.85rem,2vw,1rem)]">
-            Нажми на «НАЧАТЬ»
           </p>
         </div>
       </div>

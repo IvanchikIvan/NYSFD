@@ -435,14 +435,6 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef }) {
               <span className="tree-star tree-star-top">*</span>
             </div>
 
-            <button
-              className="debug-reset-button"
-              onClick={handleReset}
-              type="button"
-            >
-              Reset
-            </button>
-
             {treeLines.map((line, rowIdx) => (
               <div className="tree-line" key={rowIdx}>
                 {line.map((star) => (

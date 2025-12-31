@@ -429,47 +429,6 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef }) {
           <span className="play-icon" />
         </button>
 
-        <div className="controls-panel">
-          <div className="control-group">
-            <label className="control-label">
-              Volume: {Math.round(volume * 100)}%
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={handleVolumeChange}
-              />
-            </label>
-          </div>
-
-          <div className="control-group">
-            <label className="control-label">
-              Debug time (sec):
-              <input
-                type="number"
-                value={currentTime.toFixed(1)}
-                onChange={handleTimeInputChange}
-              />
-            </label>
-            <div className="control-slider">
-              <input
-                type="range"
-                min="0"
-                max={duration || 0}
-                step="0.1"
-                value={currentTime}
-                onChange={handleTimeSliderChange}
-              />
-            </div>
-            <div className="time-info">
-              {currentTime.toFixed(1)}s /{" "}
-              {duration ? duration.toFixed(1) : "0.0"}s
-            </div>
-          </div>
-        </div>
-
         <div className="tree-wrapper">
           <div className="tree-container">
             <div className="tree-line">

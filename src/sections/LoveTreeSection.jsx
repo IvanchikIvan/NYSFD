@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import Section from "../components/Section";
+import music from '../assets/sweet.mp3'
 
 const LEVELS = 14;
 const TRUNK_HEIGHT = 4;
@@ -161,11 +162,10 @@ const TIMED_WORDS = [
   { text: "\n", t: 146.3 },
 ];
 
-const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef, isActive }) {
+const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef }) {
   const audioRef = useRef(null);
   const fadeIntervalRef = useRef(null);
   const initialVolumeRef = useRef(1);
-  const hasAutoPlayedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
@@ -284,16 +284,12 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef, isActive
 
           const elapsed = currentAudio.currentTime - fadeStartTime;
           const progress = Math.min(elapsed / FADE_OUT_DURATION, 1);
-          
-          // Плавная экспоненциальная кривая для более естественного затухания
-          const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-          const newVolume = startVolume * (1 - easeOutCubic);
+          const newVolume = startVolume * (1 - progress);
 
           currentAudio.volume = Math.max(0, newVolume);
 
           // Останавливаем интервал когда достигли нуля или конца
-          if (newVolume <= 0.001 || progress >= 1) {
-            currentAudio.volume = 0;
+          if (newVolume <= 0 || progress >= 1) {
             clearInterval(fadeIntervalRef.current);
             fadeIntervalRef.current = null;
           }
@@ -347,31 +343,6 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef, isActive
     };
   }, []);
 
-  // Автоматический запуск при входе на секцию
-  useEffect(() => {
-    if (isActive && !hasAutoPlayedRef.current) {
-      hasAutoPlayedRef.current = true;
-      const audio = audioRef.current;
-      if (audio && audio.paused) {
-        // Небольшая задержка для плавности
-        const timer = setTimeout(() => {
-          audio.play().catch((err) => {
-            console.log('Autoplay prevented:', err);
-          });
-        }, 300);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [isActive]);
-
-  // Полный сброс при уходе с секции
-  useEffect(() => {
-    if (!isActive) {
-      handleReset();
-      hasAutoPlayedRef.current = false; // Сбрасываем флаг для следующего визита
-    }
-  }, [isActive]);
-
   // Очистка интервала при размонтировании
   useEffect(() => {
     return () => {
@@ -391,12 +362,9 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef, isActive
     } else {
       // При запуске восстанавливаем громкость если песня закончилась
       if (audio.currentTime >= duration - 0.1) {
-        audio.currentTime = 0;
         audio.volume = initialVolumeRef.current;
       }
-      audio.play().catch((err) => {
-        console.log('Play prevented:', err);
-      });
+      audio.play();
     }
   };
 
@@ -504,7 +472,7 @@ const LoveTreeSection = memo(function LoveTreeSection({ id, sectionRef, isActive
 
         <audio
           ref={audioRef}
-          src="/sweet.mp3"
+          src={music}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
         />

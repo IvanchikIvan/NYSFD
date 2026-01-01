@@ -114,7 +114,7 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
               textShadow: "0 2px 10px rgba(255, 105, 180, 0.3)",
             }}
           >
-            Листай колёсиком мышки
+            Листай колёсиком мышки или пальчиком
           </p>
 
           {/* Анимированная иконка скролла */}

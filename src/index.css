@@ -1,16 +1,16 @@
 @import "tailwindcss";
 
-/* Optional layout offsets (e.g. fixed header/footer heights). */
 :root {
   --app-header-offset: 0px;
   --app-footer-offset: 0px;
 
-  /* Holiday palette */
-  --ny-red: #ff2e88;
-  --ny-green: #22ff9a;
-  --ny-gold: #ffd166;
-  --ny-blue: #4cc9f0;
-  --ny-violet: #7c3aed;
+  /* Strawberry & Contrast palette */
+  --straw-red: #ff2a5f;
+  --straw-pink: #ff758c;
+  --straw-dark: #1f030a;
+  --contrast-teal: #e2feff;
+  --contrast-purple: #b026ff;
+  --contrast-green: #22ff9a;
 }
 
 html,
@@ -22,18 +22,77 @@ body,
 
 body {
   margin: 0;
-  overflow: hidden; /* Disable native scroll on the page */
-  overscroll-behavior: none; /* Reduce scroll chaining/bounce */
+  overflow: hidden;
+  overscroll-behavior: none;
 
-  /* Festive bright gradient background */
+  /* Strawberry gradient background */
   background:
-    radial-gradient(900px 520px at 10% 10%, rgba(255, 46, 136, 0.55), transparent 60%),
-    radial-gradient(850px 520px at 90% 15%, rgba(76, 201, 240, 0.5), transparent 60%),
-    radial-gradient(900px 600px at 20% 90%, rgba(34, 255, 154, 0.35), transparent 65%),
-    radial-gradient(900px 600px at 85% 85%, rgba(255, 209, 102, 0.35), transparent 70%),
-    linear-gradient(135deg, #0a0420 0%, #120526 35%, #20083a 100%);
+    radial-gradient(900px 520px at 10% 10%, rgba(255, 42, 95, 0.45), transparent 60%),
+    radial-gradient(850px 520px at 90% 15%, rgba(255, 117, 140, 0.4), transparent 60%),
+    radial-gradient(900px 600px at 20% 90%, rgba(200, 15, 60, 0.35), transparent 65%),
+    radial-gradient(900px 600px at 85% 85%, rgba(255, 20, 80, 0.35), transparent 70%),
+    linear-gradient(135deg, #1f030a 0%, #300512 35%, #4a0618 100%);
   background-size: 160% 160%;
   animation: festivalBackground 18s ease-in-out infinite;
+}
+@keyframes floatUp {
+  0% { transform: translateY(100px) rotate(0deg) scale(0.8); opacity: 0; }
+  10% { opacity: 0.05; }
+  90% { opacity: 0.05; }
+  100% { transform: translateY(-110vh) rotate(360deg) scale(1.2); opacity: 0; }
+}
+
+@keyframes festivalBackground {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- GLASS CAPSULE FOR TIMER --- */
+.glass-capsule {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 6px 20px rgba(255, 255, 255, 0.3),
+    inset 0 -6px 20px rgba(0, 0, 0, 0.5),
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(0, 245, 255, 0.25); /* Contrast cyan glow */
+  backdrop-filter: blur(20px);
+  border-radius: 9999px; /* Pill shape */
+  overflow: hidden;
+}
+
+/* 3D Glass reflection */
+.glass-capsule::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 5%;
+  right: 5%;
+  height: 35%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%);
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.capsule-display {
+  color: var(--contrast-teal);
+  text-shadow: 0 0 12px var(--contrast-teal), 0 0 24px rgba(0, 245, 255, 0.5);
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+/* Hide scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Full-screen section shell */

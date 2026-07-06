@@ -17,7 +17,7 @@ const QRCodeSection = memo(function QRCodeSection({ id, sectionRef }) {
       }}
     >
       {/* Декоративные элементы фона */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute  pointer-events-none">
         <div 
           className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-10"
           style={{
@@ -33,7 +33,7 @@ const QRCodeSection = memo(function QRCodeSection({ id, sectionRef }) {
       </div>
 
       {/* Vignette */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_40%,rgba(0,0,0,0.7)_100%)]" />
+      <div className="pointer-events-none absolute  bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_40%,rgba(0,0,0,0.7)_100%)]" />
 
       <div className="relative z-10 w-full max-w-2xl px-4 sm:px-6 text-center">
         {/* Заголовок */}

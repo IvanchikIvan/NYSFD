@@ -42,7 +42,7 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
       {/* Контент */}
       <div className="relative z-10 text-center px-4 max-w-4xl">
         {/* Главный заголовок */}
-        <h1
+       <h1
           className={`mb-8 transition-all duration-1000 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-8"
           }`}
@@ -50,15 +50,15 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
             fontSize: "clamp(2.5rem, 8vw, 5rem)",
             fontFamily: "'Playfair Display', 'Georgia', serif",
             fontWeight: "700",
-            background:
-              "linear-gradient(135deg, #ffd700 0%, #ffb6c1 50%, #ff69b4 100%)",
+            // Контрастный градиент: бирюзовый -> фиолетовый
+            background: "linear-gradient(135deg, #00f5ff 0%, #b026ff 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
             letterSpacing: "0.02em",
             lineHeight: "1.2",
-            textShadow: "0 0 40px rgba(255, 182, 193, 0.5)",
-            filter: "drop-shadow(0 4px 20px rgba(255, 105, 180, 0.3))",
+            textShadow: "0 0 40px rgba(0, 245, 255, 0.4)",
+            filter: "drop-shadow(0 4px 20px rgba(176, 38, 255, 0.4))",
           }}
         >
           Привет, любимая
@@ -72,9 +72,9 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
           style={{
             width: "120px",
             height: "3px",
-            background:
-              "linear-gradient(90deg, transparent, #ff69b4, transparent)",
+            background: "linear-gradient(90deg, transparent, #00f5ff, transparent)",
             borderRadius: "2px",
+            boxShadow: "0 0 10px rgba(0, 245, 255, 0.6)",
           }}
         />
 
@@ -88,10 +88,10 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
             fontFamily: "'Crimson Text', 'Georgia', serif",
             fontWeight: "400",
             fontStyle: "italic",
-            color: "#ffe4e6",
+            color: "#e0faff", // Светло-бирюзовый
             letterSpacing: "0.03em",
             lineHeight: "1.5",
-            textShadow: "0 2px 15px rgba(255, 182, 193, 0.4)",
+            textShadow: "0 2px 15px rgba(0, 245, 255, 0.5)",
           }}
         >
           У меня есть, что тебе сказать

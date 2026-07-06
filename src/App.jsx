@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import SectionWrapper from "./components/SectionWrapper";
+import FloatingStrawberries from "./components/FloatingStrawberries";
 
 const ZeroSection = lazy(() => import("./sections/ZeroSection.jsx"));
 const HelloSection = lazy(() => import("./sections/HelloSection.jsx"));
@@ -17,10 +18,11 @@ export default function App() {
         </div>
       }
     >
+      <FloatingStrawberries />
       <SectionWrapper>
         <ZeroSection id="zero" />
         <HelloSection id="hello" />
-        <InfiniteCarouselSection id="carousel" />
+        {/* <InfiniteCarouselSection id="carousel" /> */}
         <RotatingWheelSection id="wheel" />
         <LoveTreeSection id="tree" />
         <QRCodeSection id="qr" />

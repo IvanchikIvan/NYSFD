@@ -308,7 +308,7 @@ export default function SectionWrapper({ children }) {
     <SectionNavContext.Provider value={navValue}>
       <div
         ref={containerRef}
-        className="relative h-screen w-screen flex overflow-x-hidden overflow-y-hidden bg-zinc-950 text-white"
+        className="relative h-screen w-screen flex overflow-x-hidden overflow-y-hidden bg-transparent text-white"
         aria-roledescription="carousel"
         aria-label="Full screen sections"
       >
@@ -326,7 +326,7 @@ export default function SectionWrapper({ children }) {
         {isTransitioning && (
           <div
             key={transitionKey}
-            className="pointer-events-none absolute inset-0 z-50"
+            className="pointer-events-none absolute  z-50"
             style={{
               background:
                 "radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.85) 100%)",

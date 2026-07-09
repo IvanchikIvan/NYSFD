@@ -51,13 +51,13 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
             fontFamily: "'Playfair Display', 'Georgia', serif",
             fontWeight: "700",
             // Контрастный градиент: бирюзовый -> фиолетовый
-            background: "linear-gradient(135deg, #00f5ff 0%, #b026ff 100%)",
+            background: "linear-gradient(135deg, rgb(255, 107, 157) 0%, rgb(255, 195, 160) 100%) text",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
             letterSpacing: "0.02em",
             lineHeight: "1.2",
-            textShadow: "0 0 40px rgba(0, 245, 255, 0.4)",
+            textShadow: "0 0 30px rgba(255, 107, 157, 0.3)",
             filter: "drop-shadow(0 4px 20px rgba(176, 38, 255, 0.4))",
           }}
         >
@@ -72,9 +72,9 @@ const HelloSection = memo(function HelloSection({ id, sectionRef }) {
           style={{
             width: "120px",
             height: "3px",
-            background: "linear-gradient(90deg, transparent, #00f5ff, transparent)",
+            background: "linear-gradient(90deg, transparent, #a25f43ff, transparent)",
             borderRadius: "2px",
-            boxShadow: "0 0 10px rgba(0, 245, 255, 0.6)",
+            boxShadow: "0 0 10px rgba(255, 128, 0, 0.33)",
           }}
         />
 

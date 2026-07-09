@@ -25,16 +25,9 @@ export function useSectionNav() {
   return useContext(SectionNavContext);
 }
 
-/**
- * Container for full-screen horizontal sections.
- * - Tracks active section index
- * - Handles wheel/touch/keyboard with native listeners
- * - Uses animated scrollLeft for consistent cinematic transitions
- */
 export default function SectionWrapper({ children }) {
   const containerRef = useRef(null);
   const touchStartXRef = useRef(null);
-
   const rafRef = useRef(null);
   const animRef = useRef(null);
 
@@ -63,13 +56,11 @@ export default function SectionWrapper({ children }) {
 
   useEffect(() => {
     setSectionsCount(childArray.length);
-
     const nextRefs = new Array(childArray.length);
     for (let i = 0; i < childArray.length; i += 1) {
       nextRefs[i] = sectionRefs.current[i] || React.createRef();
     }
     sectionRefs.current = nextRefs;
-
     setActiveIndex((idx) => clamp(idx, 0, Math.max(0, childArray.length - 1)));
   }, [childArray.length]);
 
@@ -150,7 +141,6 @@ export default function SectionWrapper({ children }) {
     scrollToIndex(activeIndex - 1);
   }, [isScrolling, scrollToIndex, activeIndex]);
 
-  // Native wheel handler with passive:false
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -158,7 +148,6 @@ export default function SectionWrapper({ children }) {
     const handleWheel = (e) => {
       e.preventDefault();
       if (isScrolling) return;
-
       if (e.deltaY > 0 || e.deltaX > 0) goNext();
       else if (e.deltaY < 0 || e.deltaX < 0) goPrev();
     };
@@ -170,32 +159,23 @@ export default function SectionWrapper({ children }) {
   const onKeyDown = useCallback(
     (e) => {
       if (isScrolling) return;
-
       const key = e.key;
 
-      if (
-        key === "ArrowRight" ||
-        key === "ArrowDown" ||
-        key === "PageDown" ||
-        key === " "
-      ) {
+      if (key === "ArrowRight" || key === "ArrowDown" || key === "PageDown" || key === " ") {
         e.preventDefault();
         goNext();
         return;
       }
-
       if (key === "ArrowLeft" || key === "ArrowUp" || key === "PageUp") {
         e.preventDefault();
         goPrev();
         return;
       }
-
       if (key === "Home") {
         e.preventDefault();
         scrollToIndex(0);
         return;
       }
-
       if (key === "End") {
         e.preventDefault();
         scrollToIndex(sectionsCount - 1);
@@ -244,18 +224,14 @@ export default function SectionWrapper({ children }) {
     };
   }, [onTouchStart, onTouchEnd, onKeyDown]);
 
-  // A11y + focus management
   useEffect(() => {
     sectionRefs.current.forEach((ref, i) => {
       const el = ref.current;
       if (!el) return;
-
       const isActive = i === activeIndex;
       el.setAttribute("aria-hidden", String(!isActive));
-
       if (isActive) el.removeAttribute("inert");
       else el.setAttribute("inert", "");
-
       el.style.willChange = isActive ? "transform" : "";
     });
 
@@ -267,25 +243,21 @@ export default function SectionWrapper({ children }) {
     }
   }, [activeIndex]);
 
-  // Realign on resize/orientation
   useEffect(() => {
     const align = () => {
       const container = containerRef.current;
       if (!container) return;
       container.scrollLeft = activeIndex * container.clientWidth;
     };
-
     window.addEventListener("resize", align);
     window.addEventListener("orientationchange", align);
     align();
-
     return () => {
       window.removeEventListener("resize", align);
       window.removeEventListener("orientationchange", align);
     };
   }, [activeIndex]);
 
-  // Cleanup rAF on unmount
   useEffect(() => {
     return () => {
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
@@ -323,14 +295,14 @@ export default function SectionWrapper({ children }) {
           });
         })}
 
+        {/* Эффект затемнения в момент перелистывания */}
         {isTransitioning && (
           <div
             key={transitionKey}
-            className="pointer-events-none absolute  z-50"
+            className="pointer-events-none fixed inset-0 z-50"
             style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.85) 100%)",
-              animation: `cinematicFade ${SCROLL_ANIM_MS}ms ease-in-out`,
+              background: "radial-gradient(ellipse at center, rgba(10, 1, 3, 0.3) 0%, rgba(10, 1, 3, 0.35) 30%)",
+              animation: `cinematicFade ${SCROLL_ANIM_MS}ms ease-in-out forwards`,
             }}
           />
         )}
@@ -338,8 +310,8 @@ export default function SectionWrapper({ children }) {
         <style>{`
           @keyframes cinematicFade {
             0% { opacity: 0; }
-            25% { opacity: 1; }
-            60% { opacity: 0.55; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
             100% { opacity: 0; }
           }
         `}</style>

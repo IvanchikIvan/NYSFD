@@ -1,31 +1,34 @@
-import React, { useMemo } from 'react';
+function pseudoRandom(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+const BERRIES = Array.from({ length: 15 }).map((_, i) => {
+  const seed = i + 1;
+
+  return {
+    id: i,
+    left: pseudoRandom(seed) * 100,
+    animationDuration: 10 + pseudoRandom(seed + 20) * 15,
+    animationDelay: pseudoRandom(seed + 40) * -20,
+    size: 1.5 + pseudoRandom(seed + 60) * 2,
+    rotation: -30 + pseudoRandom(seed + 80) * 60,
+  };
+});
 
 export default function FloatingStrawberries() {
-  const berries = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, i) => {
-      const left = Math.random() * 100;
-      const animationDuration = 10 + Math.random() * 15;
-      const animationDelay = Math.random() * -20;
-      const size = 1.5 + Math.random() * 2;
-      const rotation = -30 + Math.random() * 60;
-      
-      return { id: i, left, animationDuration, animationDelay, size, rotation };
-    });
-  }, []);
-
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {berries.map((berry) => (
+      {BERRIES.map((berry) => (
         <div
           key={berry.id}
-          className="absolute bottom-[-10%] flex items-center justify-center opacity-90"
+          className="floating-strawberry"
           style={{
-            left: `${berry.left}%`,
-            fontSize: `${berry.size}rem`,
-            animation: `floatUp ${berry.animationDuration}s linear infinite`,
-            animationDelay: `${berry.animationDelay}s`,
-            transform: `rotate(${berry.rotation}deg)`,
-            filter: 'drop-shadow(0 4px 12px rgba(255, 42, 95, 0.4))'
+            "--berry-left": `${berry.left}%`,
+            "--berry-size": `${berry.size}rem`,
+            "--berry-duration": `${berry.animationDuration}s`,
+            "--berry-delay": `${berry.animationDelay}s`,
+            "--berry-rotation": `${berry.rotation}deg`,
           }}
         >
           🍓

@@ -1,0 +1,52 @@
+:root {
+  --app-header-offset: 0px;
+  --app-footer-offset: 0px;
+  --straw-red: #ff2a5f;
+  --straw-pink: #ff758c;
+  --straw-dark: #1f030a;
+  --accent-peach: #ffc3a0;
+  --accent-rose: #ff6b9d;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background:
+    radial-gradient(900px 520px at 10% 10%, rgba(255, 42, 95, 0.45), transparent 60%),
+    radial-gradient(850px 520px at 90% 15%, rgba(255, 117, 140, 0.4), transparent 60%),
+    radial-gradient(900px 600px at 20% 90%, rgba(200, 15, 60, 0.35), transparent 65%),
+    radial-gradient(900px 600px at 85% 85%, rgba(255, 20, 80, 0.35), transparent 70%),
+    linear-gradient(135deg, #1f030a 0%, #300512 35%, #4a0618 100%);
+  background-size: 160% 160%;
+  animation: festivalBackground 18s ease-in-out infinite;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+a,
+img,
+svg {
+  max-width: 100%;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -76,12 +76,14 @@ const Section = memo(
         data-testid={`section-${id}`}
         data-section-id={id}
         className={[
-          "h-screen w-screen flex-shrink-0",
+          "box-border h-screen w-screen min-w-0 flex-shrink-0",
           "pt-[var(--app-header-offset)] pb-[var(--app-footer-offset)]",
           "outline-none",
           className,
         ].join(" ")}
       >
+        <div className="section-color-wash" aria-hidden="true" />
+        <div className="section-transition" aria-hidden="true" />
         {children}
       </section>
     );

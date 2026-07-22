@@ -4,7 +4,6 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/NYSFD/',
   build: {
     target: 'esnext',
     minify: 'terser',

@@ -1,16 +1,89 @@
-# React + Vite
+# NYSFD
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Романтический интерактивный сайт-подарок на React и Vite.
 
-Currently, two official plugins are available:
+Сайт состоит из полноэкранных секций с горизонтальной навигацией:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- таймер с даты начала отношений;
+- приветственный экран;
+- интерактивное колесо с причинами любви;
+- QR-код для быстрого возврата на опубликованную страницу.
 
-## React Compiler
+## Стек
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- Vite 7
+- Tailwind CSS 4
+- ESLint
+- GitHub Pages через `gh-pages`
 
-## Expanding the ESLint configuration
+## Структура
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```text
+src/
+  components/
+    FloatingStrawberries.jsx
+    Section.jsx
+    SectionWrapper.jsx
+  sections/
+    HelloSection.jsx
+    QRCodeSection.jsx
+    RotatingWheelSection.jsx
+    ZeroSection.jsx
+  styles/
+    base.css
+    effects.css
+    sections.css
+  App.jsx
+  index.css
+  main.jsx
+```
+
+## Запуск
+
+Установить зависимости:
+
+```bash
+npm install
+```
+
+Запустить локальный сервер:
+
+```bash
+npm run dev
+```
+
+Проверить сборку:
+
+```bash
+npm run build
+```
+
+Проверить линтер:
+
+```bash
+npm run lint
+```
+
+## Деплой
+
+Проект настроен для публикации на GitHub Pages по пути `/NYSFD/`.
+
+```bash
+npm run deploy
+```
+
+Если репозиторий или публичный URL изменится, обнови:
+
+- `base` в `vite.config.js`;
+- `SITE_URL` в `src/sections/QRCodeSection.jsx`.
+
+## Поддержка
+
+Основное оформление вынесено из JSX в CSS:
+
+- `base.css` содержит глобальную базу приложения;
+- `effects.css` содержит фоновые и анимационные эффекты;
+- `sections.css` содержит стили конкретных секций и повторяемые текстовые классы.
+
+Inline-стили оставлены только для динамических значений, например позиции элементов колеса и случайных параметров падающих клубник.

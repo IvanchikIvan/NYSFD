@@ -1,15 +1,15 @@
 import React, {
-  createContext,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  useContext,
 } from "react";
+import { SectionNavContext } from "./SectionNavContext";
 
 const TOUCH_THRESHOLD_PX = 50;
 const SCROLL_ANIM_MS = 1600;
+const MOBILE_BREAKPOINT = "(max-width: 639px)";
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -19,30 +19,28 @@ function easeInOutCubic(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-const SectionNavContext = createContext(null);
-
-export function useSectionNav() {
-  return useContext(SectionNavContext);
-}
-
 export default function SectionWrapper({ children }) {
   const containerRef = useRef(null);
-  const touchStartXRef = useRef(null);
-  const rafRef = useRef(null);
+  const touchStartRef = useRef(null);
   const animRef = useRef(null);
+  const activeIndexRef = useRef(0);
 
   const childArray = useMemo(
     () => React.Children.toArray(children).filter(Boolean),
     [children]
   );
 
-  const [sectionsCount, setSectionsCount] = useState(childArray.length);
+  const sectionsCount = childArray.length;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [transitionKey, setTransitionKey] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isVertical, setIsVertical] = useState(() =>
+    window.matchMedia(MOBILE_BREAKPOINT).matches
+  );
 
-  const sectionRefs = useRef([]);
+  const sectionRefs = useMemo(
+    () => childArray.map(() => React.createRef()),
+    [childArray]
+  );
 
   const idToIndex = useMemo(() => {
     const map = new Map();
@@ -54,16 +52,6 @@ export default function SectionWrapper({ children }) {
     return map;
   }, [childArray]);
 
-  useEffect(() => {
-    setSectionsCount(childArray.length);
-    const nextRefs = new Array(childArray.length);
-    for (let i = 0; i < childArray.length; i += 1) {
-      nextRefs[i] = sectionRefs.current[i] || React.createRef();
-    }
-    sectionRefs.current = nextRefs;
-    setActiveIndex((idx) => clamp(idx, 0, Math.max(0, childArray.length - 1)));
-  }, [childArray.length]);
-
   const cancelAnimation = useCallback(() => {
     if (animRef.current?.rafId) {
       window.cancelAnimationFrame(animRef.current.rafId);
@@ -72,14 +60,14 @@ export default function SectionWrapper({ children }) {
   }, []);
 
   const animateScrollTo = useCallback(
-    (targetLeft, durationMs) => {
+    (targetPosition, durationMs) => {
       const container = containerRef.current;
       if (!container) return;
 
       cancelAnimation();
 
-      const from = container.scrollLeft;
-      const to = targetLeft;
+      const from = isVertical ? container.scrollTop : container.scrollLeft;
+      const to = targetPosition;
       const start = performance.now();
 
       animRef.current = { rafId: null };
@@ -88,20 +76,23 @@ export default function SectionWrapper({ children }) {
         const elapsed = now - start;
         const t = clamp(elapsed / durationMs, 0, 1);
         const eased = easeInOutCubic(t);
-        container.scrollLeft = from + (to - from) * eased;
+        if (isVertical) {
+          container.scrollTop = from + (to - from) * eased;
+        } else {
+          container.scrollLeft = from + (to - from) * eased;
+        }
 
         if (t < 1) {
           animRef.current.rafId = window.requestAnimationFrame(step);
         } else {
           animRef.current = null;
           setIsScrolling(false);
-          setIsTransitioning(false);
         }
       };
 
       animRef.current.rafId = window.requestAnimationFrame(step);
     },
-    [cancelAnimation]
+    [cancelAnimation, isVertical]
   );
 
   const scrollToIndex = useCallback(
@@ -111,14 +102,12 @@ export default function SectionWrapper({ children }) {
       if (!container) return;
 
       setIsScrolling(true);
-      setIsTransitioning(true);
-      setTransitionKey((k) => k + 1);
       setActiveIndex(next);
 
-      const targetScroll = next * container.clientWidth;
+      const targetScroll = next * (isVertical ? container.clientHeight : container.clientWidth);
       animateScrollTo(targetScroll, SCROLL_ANIM_MS);
     },
-    [sectionsCount, animateScrollTo]
+    [sectionsCount, animateScrollTo, isVertical]
   );
 
   const scrollToId = useCallback(
@@ -142,31 +131,43 @@ export default function SectionWrapper({ children }) {
   }, [isScrolling, scrollToIndex, activeIndex]);
 
   useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleWheel = (e) => {
       e.preventDefault();
       if (isScrolling) return;
-      if (e.deltaY > 0 || e.deltaX > 0) goNext();
-      else if (e.deltaY < 0 || e.deltaX < 0) goPrev();
+      const delta = isVertical ? e.deltaY : e.deltaY || e.deltaX;
+      if (delta > 0) goNext();
+      else if (delta < 0) goPrev();
     };
 
     container.addEventListener("wheel", handleWheel, { passive: false });
     return () => container.removeEventListener("wheel", handleWheel);
-  }, [isScrolling, goNext, goPrev]);
+  }, [isScrolling, goNext, goPrev, isVertical]);
 
   const onKeyDown = useCallback(
     (e) => {
       if (isScrolling) return;
       const key = e.key;
 
-      if (key === "ArrowRight" || key === "ArrowDown" || key === "PageDown" || key === " ") {
+      const nextKeys = isVertical
+        ? ["ArrowDown", "PageDown", " "]
+        : ["ArrowRight", "ArrowDown", "PageDown", " "];
+      const prevKeys = isVertical
+        ? ["ArrowUp", "PageUp"]
+        : ["ArrowLeft", "ArrowUp", "PageUp"];
+
+      if (nextKeys.includes(key)) {
         e.preventDefault();
         goNext();
         return;
       }
-      if (key === "ArrowLeft" || key === "ArrowUp" || key === "PageUp") {
+      if (prevKeys.includes(key)) {
         e.preventDefault();
         goPrev();
         return;
@@ -181,33 +182,50 @@ export default function SectionWrapper({ children }) {
         scrollToIndex(sectionsCount - 1);
       }
     },
-    [isScrolling, goNext, goPrev, scrollToIndex, sectionsCount]
+    [isScrolling, goNext, goPrev, scrollToIndex, sectionsCount, isVertical]
   );
 
   const onTouchStart = useCallback((e) => {
     if (!e.touches || e.touches.length === 0) return;
-    touchStartXRef.current = e.touches[0].clientX;
+    if (e.target instanceof Element && e.target.closest("[data-section-gesture-lock]")) {
+      touchStartRef.current = null;
+      return;
+    }
+
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
   }, []);
 
   const onTouchEnd = useCallback(
     (e) => {
-      const startX = touchStartXRef.current;
-      touchStartXRef.current = null;
+      const start = touchStartRef.current;
+      touchStartRef.current = null;
 
-      if (startX == null) return;
+      if (start == null) return;
       if (!e.changedTouches || e.changedTouches.length === 0) return;
 
-      const endX = e.changedTouches[0].clientX;
-      const deltaX = startX - endX;
+      const end = e.changedTouches[0];
+      const delta = isVertical ? start.y - end.clientY : start.x - end.clientX;
 
-      if (Math.abs(deltaX) < TOUCH_THRESHOLD_PX) return;
+      if (Math.abs(delta) < TOUCH_THRESHOLD_PX) return;
       if (isScrolling) return;
 
-      if (deltaX > 0) goNext();
+      if (delta > 0) goNext();
       else goPrev();
     },
-    [isScrolling, goNext, goPrev]
+    [isScrolling, goNext, goPrev, isVertical]
   );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(MOBILE_BREAKPOINT);
+    const updateOrientation = () => setIsVertical(mediaQuery.matches);
+
+    updateOrientation();
+    mediaQuery.addEventListener("change", updateOrientation);
+    return () => mediaQuery.removeEventListener("change", updateOrientation);
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -225,7 +243,7 @@ export default function SectionWrapper({ children }) {
   }, [onTouchStart, onTouchEnd, onKeyDown]);
 
   useEffect(() => {
-    sectionRefs.current.forEach((ref, i) => {
+    sectionRefs.forEach((ref, i) => {
       const el = ref.current;
       if (!el) return;
       const isActive = i === activeIndex;
@@ -235,19 +253,26 @@ export default function SectionWrapper({ children }) {
       el.style.willChange = isActive ? "transform" : "";
     });
 
-    const activeEl = sectionRefs.current[activeIndex]?.current;
+    const activeEl = sectionRefs[activeIndex]?.current;
     if (activeEl) {
       window.setTimeout(() => {
         activeEl.focus({ preventScroll: true });
       }, 60);
     }
-  }, [activeIndex]);
+  }, [activeIndex, sectionRefs]);
 
   useEffect(() => {
     const align = () => {
       const container = containerRef.current;
       if (!container) return;
-      container.scrollLeft = activeIndex * container.clientWidth;
+
+      if (isVertical) {
+        container.scrollLeft = 0;
+        container.scrollTop = activeIndexRef.current * container.clientHeight;
+      } else {
+        container.scrollTop = 0;
+        container.scrollLeft = activeIndexRef.current * container.clientWidth;
+      }
     };
     window.addEventListener("resize", align);
     window.addEventListener("orientationchange", align);
@@ -256,11 +281,10 @@ export default function SectionWrapper({ children }) {
       window.removeEventListener("resize", align);
       window.removeEventListener("orientationchange", align);
     };
-  }, [activeIndex]);
+  }, [isVertical]);
 
   useEffect(() => {
     return () => {
-      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
       cancelAnimation();
     };
   }, [cancelAnimation]);
@@ -280,15 +304,16 @@ export default function SectionWrapper({ children }) {
     <SectionNavContext.Provider value={navValue}>
       <div
         ref={containerRef}
-        className="relative h-screen w-screen flex overflow-x-hidden overflow-y-hidden bg-transparent text-white"
+        className="section-stage relative flex h-screen w-screen flex-col overflow-x-hidden overflow-y-hidden text-white sm:flex-row"
         aria-roledescription="carousel"
+        aria-orientation={isVertical ? "vertical" : "horizontal"}
         aria-label="Full screen sections"
       >
         {childArray.map((child, index) => {
           if (!React.isValidElement(child)) return null;
 
           return React.cloneElement(child, {
-            ref: sectionRefs.current[index],
+            sectionRef: sectionRefs[index],
             key: child.props.id || index,
             isActive: index === activeIndex,
             index,
@@ -296,25 +321,6 @@ export default function SectionWrapper({ children }) {
         })}
 
         {/* Эффект затемнения в момент перелистывания */}
-        {isTransitioning && (
-          <div
-            key={transitionKey}
-            className="pointer-events-none fixed inset-0 z-50"
-            style={{
-              background: "radial-gradient(ellipse at center, rgba(10, 1, 3, 0.3) 0%, rgba(10, 1, 3, 0.35) 30%)",
-              animation: `cinematicFade ${SCROLL_ANIM_MS}ms ease-in-out forwards`,
-            }}
-          />
-        )}
-
-        <style>{`
-          @keyframes cinematicFade {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
-          }
-        `}</style>
       </div>
     </SectionNavContext.Provider>
   );

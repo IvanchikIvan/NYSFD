@@ -139,6 +139,13 @@ export default function SectionWrapper({ children }) {
     if (!container) return;
 
     const handleWheel = (e) => {
+      if (
+        e.target instanceof Element &&
+        e.target.closest("[data-section-gesture-lock]")
+      ) {
+        return;
+      }
+
       e.preventDefault();
       if (isScrolling) return;
       const delta = isVertical ? e.deltaY : e.deltaY || e.deltaX;

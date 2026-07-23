@@ -62,6 +62,22 @@ const TimelineSection = memo(function TimelineSection({ id, sectionRef }) {
             );
           })}
         </div>
+
+        <div className="timeline-mobile-list" data-section-gesture-lock>
+          {memories.timeline.map((event) => (
+            <article
+              className="timeline-mobile-event"
+              key={`${event.date}-${event.title}`}
+            >
+              <span className="timeline-mobile-node" aria-hidden="true" />
+              <div className="timeline-event-card">
+                <time>{event.date}</time>
+                <h3>{event.title}</h3>
+                <p>{event.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
     </Section>
   );
